@@ -1,5 +1,10 @@
 name: ci
-on: ['push']
+on: 
+  push:
+    branches:
+      - '**'
+    tags-ignore:
+      - '**'
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -28,3 +33,15 @@ jobs:
         run: cc-test-reporter after-build
         env:
           CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
+      - name: Release
+        if: github.ref == 'refs/heads/master'
+        id: semantic
+        uses: cycjimmy/semantic-release-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Update major version tag (e.g., v1)
+        if: github.ref == 'refs/heads/master'
+        run: git tag -f v${MAJOR_VERSION} && git push --force origin refs/tags/v${MAJOR_VERSION}:refs/tags/v${MAJOR_VERSION}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MAJOR_VERSION: ${{ steps.semantic.outputs.new_release_major_version }}

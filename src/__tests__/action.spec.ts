@@ -1,7 +1,6 @@
 import * as exec from '@actions/exec';
 import * as core from '@actions/core';
 import { readFileSync } from 'fs';
-import * as yaml from 'yaml';
 import { runAction, setInputs } from '../action';
 
 const mainLocation = `test-main/index.js`;
@@ -107,7 +106,7 @@ describe('runAction', () => {
     expect(checkingOutInfoCalled).toBe(false);
   });
 
-  test('action loaded and executed from expected location when action-directory not specified', async () => {
+  test('action loaded and executed from expected location when pal-action-directory not specified', async () => {
     const expectedPath = `${workDirectory}/action.yml`;
     await runAction({
       token,
@@ -119,7 +118,7 @@ describe('runAction', () => {
     expect(exec.exec).toHaveBeenLastCalledWith(`node ${workDirectory}/${mainLocation}`);
   });
 
-  test('action loaded from expected location when action-directory specified', async () => {
+  test('action loaded from expected location when pal-action-directory specified', async () => {
     const expectedPath = `${workDirectory}/${actionDirectory}/action.yml`;
     await runAction({
       token,
@@ -213,7 +212,6 @@ describe('setInputs', () => {
   });
 
   test('omitted input that is optional with a default is handled properly', async () => {
-    const name = 'test_input';
     const input = 'INPUT_TEST_INPUT';
     delete process.env[input];
 
@@ -235,7 +233,6 @@ describe('setInputs', () => {
   });
 
   test('omitted input that is required with a default is handled properly', async () => {
-    const name = 'test_input';
     const input = 'INPUT_TEST_INPUT';
     delete process.env[input];
 
